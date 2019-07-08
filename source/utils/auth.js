@@ -1,9 +1,15 @@
-// Core
+
+// Instruments
+import { getPassword } from './env';
+
+const password = getPassword();
 
 export const auth = (req, res, next) => {
-    if (req.headers.authorization === `Bearer ${process.env.PASSWORD}`) {
+    const auth = req.header('authorization');
+
+    if (auth && auth === password) {
         next();
     } else {
-        res.status(401).json({ message: 'Token is not valid' });
+        res.status(401).json({ message: 'authentication credentials are not valid' });
     }
 };
