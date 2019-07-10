@@ -1,9 +1,12 @@
+import { logError } from '../../../utils';
+
 export const enrollToClass = (req, res) => {
     try {
         const data = {};
 
         res.status(200).json({ data });
     } catch (error) {
+        logError(error);
         res.status(400).json({ message: 'incorrect payload'});
     }
 };
@@ -16,6 +19,7 @@ export const expelFromClass = (req, res) => {
 
         res.status(200).json({ data });
     } catch (error) {
+        logError(error);
         res.status(400).json({ message: 'incorrect payload' });
     }
 };
