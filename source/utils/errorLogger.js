@@ -16,9 +16,31 @@ export const errorLogger = createLogger({
   ]
 });
 
+export const validationErrorLogger = createLogger({
+  level: "debug",
+  format: combine(timestamp(), errorFormat),
+  transports: [
+    new transports.File({
+      filename: "logs/validation_errors.log",
+      level: "error"
+    })
+  ]
+});
+
+export const notFoundErrorLogger = createLogger({
+  level: "debug",
+  format: combine(timestamp(), errorFormat),
+  transports: [
+    new transports.File({
+      filename: "logs/not_found_errors.log",
+      level: "error"
+    })
+  ]
+});
+
 export const logError = error => {
   if (process.env !== "test") {
     const log = `${error.name}: ${error.message}`;
-    errorLogger.error(log);
+    return errorLogger.error(log);
   }
 };
