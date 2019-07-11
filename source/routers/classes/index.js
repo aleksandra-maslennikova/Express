@@ -5,17 +5,17 @@ import express from 'express';
 import { get, post } from './route';
 import { getByHash, updateByHash, deleteByHash } from './hash/route';
 import { enrollToClass, expelFromClass } from './education/route';
-import { auth } from '../../utils';
+import { authenticate } from '../../utils';
 export const router = express.Router();
 
 router.get('/', get);
-router.post('/', [ auth ], post);
+router.post('/', [ authenticate ], post);
 
-router.get('/:classHash', [ auth ], getByHash);
-router.put('/:classHash', [ auth ], updateByHash);
-router.delete('/:classHash', [ auth ], deleteByHash);
+router.get('/:classHash', [ authenticate ], getByHash);
+router.put('/:classHash', [ authenticate ], updateByHash);
+router.delete('/:classHash', [ authenticate ], deleteByHash);
 
-router.post('/enroll', [ auth ], enrollToClass);
-router.post('/expel', [ auth ], expelFromClass);
+router.post('/enroll', [ authenticate ], enrollToClass);
+router.post('/expel', [ authenticate ], expelFromClass);
 
 export { router as classes };
