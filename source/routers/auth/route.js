@@ -1,14 +1,21 @@
 import dg from 'debug';
+import jwt from 'jsonwebtoken';
 
 const debug = dg('router:auth');
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
     debug(`${req.method} - ${req.originalUrl}`);
 
     try {
-        const { email } = req.body;
-        req.session.email = email;
-        res.sendStatus(204);
+        const { password } = req.body;
+        if (password === '123456') {
+            const token = await jwt.sign(req.body, 'super secret');
+
+            res.setHeader('X-Token', token);
+            res.sendStatus(204);
+        } else {
+            res.status(401).json({ message: 'credentials are not valid' });
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

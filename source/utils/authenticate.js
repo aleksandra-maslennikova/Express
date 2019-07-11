@@ -1,9 +1,4 @@
+import passport from 'passport';
 
+export const authenticate = passport.authenticate('jwt', { session: false });
 
-export const authenticate = (req, res, next) => {
-    if (req.session.email) {
-        next();
-    } else {
-        res.status(401).json({ message: 'authentication credentials are not valid' });
-    }
-};
