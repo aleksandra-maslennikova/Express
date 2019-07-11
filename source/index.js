@@ -1,25 +1,41 @@
+
 import express from 'express';
+import session from 'express-session';
 
 // Instruments
 import { app } from './server';
 import { getPort, logger, logError, NotFoundError, validationErrorLogger, notFoundErrorLogger } from './utils';
 
 // Routers
-import { users, login, logout, classes, lessons } from './routers';
+import { users, auth, classes, lessons } from './routers';
 
 const PORT = getPort();
 
+const sessionOptions = {
+    key:               'user',
+    secret:            'pa$$w0rd',
+    resave:            false,
+    rolling:           true,
+    saveUninitialized: false,
+    cookie:            {
+        httpOnly: true,
+        maxAge:   15 * 60 * 1000,
+    },
+};
+
 app.use(express.json({ limit: '10kb' }));
+
+app.use(express.json());
+app.use(session(sessionOptions));
 
 if (process.env.NODE_ENV !== 'production') {
     app.use(logger);
 }
 
-app.use('/users', users);
-app.use('/login', login);
-app.use('/logout', logout);
-app.use('/classes', classes);
-app.use('/lessons', lessons);
+app.use('/api/users', users);
+app.use('/api/auth', auth);
+app.use('/api/classes', classes);
+app.use('/api/lessons', lessons);
 
 app.use('*', (req, res, next) => {
     const message = `${req.method}: ${req.originalUrl}`;

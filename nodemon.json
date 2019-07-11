@@ -5,8 +5,7 @@
     "watch": ["./source", "./package.json", "./swagger"],
     "env": {
         "NODE_ENV": "development",
-        "PORT": "3000",
-        "PASSWORD": "Passwo1!"
+        "PORT": "3000"
     },
     "exec": "node -r dotenv/config -r @babel/register ./source/index.js",
     "ext": "js"

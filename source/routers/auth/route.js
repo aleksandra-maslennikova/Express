@@ -6,6 +6,8 @@ export const login = (req, res) => {
     debug(`${req.method} - ${req.originalUrl}`);
 
     try {
+        const { email } = req.body;
+        req.session.email = email;
         res.sendStatus(204);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -21,3 +23,4 @@ export const logout = (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
