@@ -1,10 +1,9 @@
-
 // Instruments
 import { getPassword } from './env';
 
 const password = getPassword();
 
-export const auth = (req, res, next) => {
+export const authenticate = (req, res, next) => {
     const auth = req.header('authorization');
 
     if (auth && auth === password) {
