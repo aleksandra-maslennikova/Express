@@ -1,6 +1,7 @@
 
 import express from 'express';
-import session from 'express-session';
+import passport from 'passport';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
 // Instruments
 import { app } from './server';
@@ -9,24 +10,29 @@ import { getPort, logger, logError, NotFoundError, validationErrorLogger, notFou
 // Routers
 import { users, auth, classes, lessons } from './routers';
 
-const PORT = getPort();
+const jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'super secret';
 
-const sessionOptions = {
-    key:               'user',
-    secret:            'pa$$w0rd',
-    resave:            false,
-    rolling:           true,
-    saveUninitialized: false,
-    cookie:            {
-        httpOnly: true,
-        maxAge:   15 * 60 * 1000,
-    },
-};
+passport.use(new JwtStrategy(jwtOptions, function (jwt_payload, done) {
+
+    if (jwt_payload) {
+        return done(null, jwt_payload);
+    }
+
+    return done(null, false);
+}));
+
+
+const PORT = getPort();
 
 app.use(express.json({ limit: '10kb' }));
 
-app.use(express.json());
-app.use(session(sessionOptions));
+// Initialize strategy
+app.use(passport.initialize());
+
+// Initialize session
+app.use(passport.session());
 
 if (process.env.NODE_ENV !== 'production') {
     app.use(logger);
@@ -74,5 +80,5 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, () => {
     //eslint-disable-next-line
-  console.log(`Server API is up on port ${PORT}`);
+    console.log(`Server API is up on port ${PORT}`);
 });
