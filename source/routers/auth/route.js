@@ -11,7 +11,7 @@ export const login = async (req, res) => {
         if (password === '123456') {
             const token = await jwt.sign(req.body, 'super secret');
 
-            res.setHeader('X-Token', token);
+            res.setHeader('Authorization', token);
             res.sendStatus(204);
         } else {
             res.status(401).json({ message: 'credentials are not valid' });

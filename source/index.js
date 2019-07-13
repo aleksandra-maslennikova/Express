@@ -11,7 +11,7 @@ import { getPort, logger, logError, NotFoundError, validationErrorLogger, notFou
 import { users, auth, classes, lessons } from './routers';
 
 const jwtOptions = {};
-jwtOptions.jwtFromRequest = ExtractJwt.fromHeader('x-token');
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = 'super secret';
 
 passport.use(new JwtStrategy(jwtOptions, function (jwt_payload, done) {
