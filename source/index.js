@@ -1,7 +1,8 @@
 
 import express from 'express';
 import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import path from 'path';
+import { Strategy as GitHubStrategy } from 'passport-github2';
 
 // Instruments
 import { app } from './server';
@@ -10,18 +11,30 @@ import { getPort, logger, logError, NotFoundError, validationErrorLogger, notFou
 // Routers
 import { users, auth, classes, lessons } from './routers';
 
-const jwtOptions = {};
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-jwtOptions.secretOrKey = 'super secret';
+const GITHUB_CLIENT_ID = '2f76a92ce4760bd2fe2e';
+const GITHUB_CLIENT_SECRET = '5f6aa2d53a282b9409b8c638ad451de93e18e769';
 
-passport.use(new JwtStrategy(jwtOptions, function (jwt_payload, done) {
 
-    if (jwt_payload) {
-        return done(null, jwt_payload);
+passport.use(new GitHubStrategy({
+    clientID:     GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    callbackURL:  'http://127.0.0.1:3000/api/auth/users',
+},
+function (accessToken, refreshToken, profile, done) {
+    if (profile) {
+        return done(null, profile);
     }
 
     return done(null, false);
 }));
+passport.serializeUser(function (user, done) {
+
+    done(null, user);
+});
+
+passport.deserializeUser(function (obj, done) {
+    done(null, obj);
+});
 
 
 const PORT = getPort();
@@ -42,6 +55,11 @@ app.use('/api/users', users);
 app.use('/api/auth', auth);
 app.use('/api/classes', classes);
 app.use('/api/lessons', lessons);
+
+app.get('/', (req, res) => {
+    const file = path.resolve('index.html');
+    res.sendFile(file);
+});
 
 app.use('*', (req, res, next) => {
     const message = `${req.method}: ${req.originalUrl}`;
